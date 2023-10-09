@@ -1,0 +1,1 @@
+MSG_LIMIT = 7
