@@ -68,3 +68,24 @@ def test_another_class_with_patched_Klass(some_class):
 
     some_class.assert_called_once_with(a=2)
     some_class.return_value.sum.assert_called_once_with(b=3)
+
+
+
+"""
+How to mock a module that imports the package that is not installed:
+
+The import below will fail with the:
+E   ModuleNotFoundError: No module named 'gravity'
+Instead patch the 'sys.modules' dictionary with the non-existing module then import
+"""
+# from etc.module_importing_not_installed_package import GravityController
+
+def test_gravity_controller_adjust():
+    mock_gravity_module = Mock()
+    mock_gravity_module.GravityField.return_value.set_curvature_radius.return_value = True
+    with patch.dict('sys.modules', {'gravity': mock_gravity_module}):               # <--- patch
+        from etc.module_importing_not_installed_package import GravityController    # <--- then import
+        sut = GravityController()
+    sut.adjust(curvature_radius=2.5)
+    mock_gravity_module.GravityField.return_value.set_curvature_radius(value=2.5)
+    
